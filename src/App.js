@@ -7,11 +7,13 @@ import Login from './components/Login';
 import Header  from './components/Header';
 import Sidebar from './components/Sidebar';
 import styled from 'styled-components';
+import { auth, provider } from './firebase';
 
  
 function App() {
 
   const [rooms, setRooms] = useState([]);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
 
   const getChannels = () => {
     db.collection('rooms').onSnapshot((snapshot)=>{
@@ -21,25 +23,36 @@ function App() {
     })
   }
 
+  const signOut = () => {
+    auth.signOut().then(()=>{
+      setUser(null);
+      localStorage.removeItem('user');
+    })
+
+  }
+
   useEffect(() => {
     getChannels();
   }, [])
 
-  console.log(rooms);
-  
+  console.log(user);
+
   return (
     <div className="App">
       <Router>
-        <Container>
-          <Header />
-            <Main>
-            <Sidebar rooms={rooms}/>  
-            <Switch>
-              <Route path='/room' component={Chat}/>
-              <Route path='/' component={Login}/>
-            </Switch>
-          </Main>
-        </Container>
+        {
+          !user ? 
+          <Login setUser={setUser}/> :
+          <Container>
+            <Header user={user} signOut={signOut}/>
+              <Main>
+              <Sidebar rooms={rooms}/>  
+              <Switch>
+                <Route path='/' component={Chat}/>
+              </Switch>
+            </Main>
+          </Container>
+        }
       </Router>
 
     </div>

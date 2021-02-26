@@ -37,7 +37,7 @@ function Sidebar({rooms}) {
           Clever Name
         </Name>
         <NewMessage>
-          <AddCircleOutlineIcon onClick={addChannel}/>
+          <AddCircleOutlineIcon />
         </NewMessage>
       </WorkspaceContainer>
       <MainChannels>
@@ -56,7 +56,7 @@ function Sidebar({rooms}) {
           <div>
             Channels
           </div>
-          <AddIcon />
+          <AddIcon style={{cursor: 'pointer'}} onClick={addChannel}/>
         </NewChannelContainer>
         <ChannelsList>
           { rooms.map((item)=>(
