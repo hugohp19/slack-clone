@@ -3,8 +3,33 @@ import styled from 'styled-components';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import AddIcon from '@material-ui/icons/Add';
 import { sidebarItems } from '../data/SidebarData';
+import db from '../firebase';
+import swal from 'sweetalert';
 
-function Sidebar() {
+function Sidebar({rooms}) {
+
+  const addChannel = () => {
+    swal({
+      text: 'Enter channel name:',
+      content: "input",
+      buttons: [true, true]
+    })
+    .then(name => {
+      console.log(name)
+      if(name){
+        db.collection('rooms').add({name: name})
+        .then(()=>  {swal("Channel Added", {
+          icon: "success",
+          })}
+        ).catch((err)=>{
+          swal('Something Went Wrong', {icon: "wrong"});
+        })
+      } else if (name === ''){
+        swal('No Channel to Add', {icon: "warning"});
+      }
+    })
+  }
+
   return (
     <Container>
       <WorkspaceContainer>
@@ -12,7 +37,7 @@ function Sidebar() {
           Clever Name
         </Name>
         <NewMessage>
-          <AddCircleOutlineIcon />
+          <AddCircleOutlineIcon onClick={addChannel}/>
         </NewMessage>
       </WorkspaceContainer>
       <MainChannels>
@@ -34,12 +59,12 @@ function Sidebar() {
           <AddIcon />
         </NewChannelContainer>
         <ChannelsList>
-          <Channel>
-            # Channel 1
-          </Channel>
-          <Channel>
-            # Channel 2
-          </Channel>
+          { rooms.map((item)=>(
+            <Channel>
+              # {item.name}
+            </Channel>
+            ))
+          }
         </ChannelsList>
       </ChannelsContainer>
     </Container>
