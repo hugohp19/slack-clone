@@ -5,8 +5,17 @@ import AddIcon from '@material-ui/icons/Add';
 import { sidebarItems } from '../data/SidebarData';
 import db from '../firebase';
 import swal from 'sweetalert';
+import { useHistory } from 'react-router-dom';
 
 function Sidebar({rooms}) {
+  const history = useHistory();
+
+  const gotToChannel = (id) =>{
+    if(id){
+      console.log(id);
+      history.push(`/${id}`)
+    }
+  }
 
   const addChannel = () => {
     swal({
@@ -60,7 +69,7 @@ function Sidebar({rooms}) {
         </NewChannelContainer>
         <ChannelsList>
           { rooms.map((item)=>(
-            <Channel>
+            <Channel onClick={()=>{gotToChannel(item.id)}}>
               # {item.name}
             </Channel>
             ))
