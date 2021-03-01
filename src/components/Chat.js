@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import ChatInput from './ChatInput';
@@ -6,11 +6,13 @@ import ChatMessage from './ChatMessage';
 import db  from '../firebase';
 import { useParams } from 'react-router-dom';
 import firebase from 'firebase';
+import { AppContext } from '../context/AppContext';
 
 function Chat({user}) {
   let { channelId } = useParams();
   const [channel, setChannel] = useState();
   const [messages, setMessages] = useState([]);
+  const {backColor} = useContext(AppContext);
 
   const getMessages = () => {
     db.collection('rooms')
@@ -18,9 +20,6 @@ function Chat({user}) {
     .collection('messages')
     .orderBy('timestamp', 'asc')
     .onSnapshot((snapshot)=>{
-      // let messages = snapshot.docs.map((doc)=>doc.data());
-      console.log(snapshot.docs.map((doc)=>doc.data()));
-      console.log(messages)
       setMessages(snapshot.docs.map((doc)=>doc.data()));
     })
   }
@@ -37,7 +36,6 @@ function Chat({user}) {
       .doc(channelId)
       .collection('messages')
       .add(payload)
-      console.log(payload);
     }
   }
 
@@ -56,7 +54,7 @@ function Chat({user}) {
  
 
   return (
-    <Container>
+    <Container style={{backgroundColor: `${backColor.chat}`}}>
       <Header>
         <Channel>
           <ChannelName>
@@ -78,7 +76,7 @@ function Chat({user}) {
         {
           messages.length > 0 && 
           messages.map((data, index)=>(
-            <ChatMessage 
+            <ChatMessage key={index}
               text={data.text}
               name={data.user}
               image={data.userImage}
@@ -86,8 +84,8 @@ function Chat({user}) {
               />
           ))
         }
-        
       </MessageContainer>
+      
       <ChatInput sendMessage={sendMessage}/>
     </Container>
   )
@@ -139,4 +137,5 @@ const MessageContainer = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
+  margin: 10px 0;
 `

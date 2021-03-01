@@ -7,7 +7,8 @@ import Login from './components/Login';
 import Header  from './components/Header';
 import Sidebar from './components/Sidebar';
 import styled from 'styled-components';
-import { auth, provider } from './firebase';
+import { auth } from './firebase';
+import { AppContextProvider } from './context/AppContext';
 
  
 function App() {
@@ -35,29 +36,28 @@ function App() {
     getChannels();
   }, [])
 
-  console.log(user);
-
   return (
     <div className="App">
-      <Router>
-        {
-          !user ? 
-          <Login setUser={setUser}/> :
-          <Container>
-            <Header user={user} signOut={signOut}/>
-              <Main>
-              <Sidebar rooms={rooms}/>  
-              <Switch>
-                <Route path='/:channelId'>
-                  <Chat user={user} />
-                </Route>
-                <Route path='/'>Select or create channel</Route>
-              </Switch>
-            </Main>
-          </Container>
-        }
-      </Router>
-
+      <AppContextProvider>
+        <Router>
+          {
+            !user ? 
+            <Login setUser={setUser}/> :
+            <Container>
+              <Header user={user} signOut={signOut}/>
+                <Main>
+                <Sidebar rooms={rooms} signOut={signOut}/>  
+                <Switch>
+                  <Route path='/:channelId'>
+                    <Chat user={user} />
+                  </Route>
+                  <Route path='/'>Select or create channel</Route>
+                </Switch>
+              </Main>
+            </Container>
+          }
+        </Router>
+      </AppContextProvider>    
     </div>
   );
 }

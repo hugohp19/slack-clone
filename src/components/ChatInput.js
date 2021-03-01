@@ -7,14 +7,12 @@ function ChatInput({sendMessage}) {
 
   const send = (e) => {
     e.preventDefault();
-    console.log(input);
     sendMessage(input);
     setInput('');
   }
 
   const handleInput = (e) => {
     e.preventDefault();
-    console.log(e.target.value);
     setInput(e.target.value)
   }
 
@@ -41,6 +39,7 @@ const Container = styled.div`
 const InputContainer = styled.div`
   border: 1px solid #8d8d8e;
   border-radius: 4px;
+  background: white;
 
   form{
     display: flex;

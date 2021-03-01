@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext} from 'react';
 import styled from 'styled-components';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import AddIcon from '@material-ui/icons/Add';
@@ -6,13 +6,14 @@ import { sidebarItems } from '../data/SidebarData';
 import db from '../firebase';
 import swal from 'sweetalert';
 import { useHistory } from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
 
-function Sidebar({rooms}) {
+function Sidebar({rooms, signOut}) {
   const history = useHistory();
+  const {backColor} = useContext(AppContext);
 
   const gotToChannel = (id) =>{
     if(id){
-      console.log(id);
       history.push(`/${id}`)
     }
   }
@@ -24,7 +25,6 @@ function Sidebar({rooms}) {
       buttons: [true, true]
     })
     .then(name => {
-      console.log(name)
       if(name){
         db.collection('rooms').add({name: name})
         .then(()=>  {swal("Channel Added", {
@@ -40,19 +40,19 @@ function Sidebar({rooms}) {
   }
 
   return (
-    <Container>
+    <Container style={{backgroundColor: `${backColor.sidebar}`, color: `${backColor.primaryText}`}}>
       <WorkspaceContainer>
         <Name>
           Clever Name
         </Name>
         <NewMessage>
-          <AddCircleOutlineIcon />
+          <AddCircleOutlineIcon style={{fill: `${backColor.sidebar}`}}/>
         </NewMessage>
       </WorkspaceContainer>
-      <MainChannels>
+      <MainChannels style={{color:  `${backColor.primaryText}`}}>
         {
-          sidebarItems.map((item)=>(
-            <MainChannelItem>
+          sidebarItems.map((item, index)=>(
+            <MainChannelItem key={index}>
               {item.icon}
               {item.text}
             </MainChannelItem>  
@@ -60,7 +60,7 @@ function Sidebar({rooms}) {
         }
         
       </MainChannels>
-      <ChannelsContainer>
+      <ChannelsContainer style={{color: `${backColor.secondaryText}`}}>
         <NewChannelContainer>
           <div>
             Channels
@@ -68,14 +68,15 @@ function Sidebar({rooms}) {
           <AddIcon style={{cursor: 'pointer'}} onClick={addChannel}/>
         </NewChannelContainer>
         <ChannelsList>
-          { rooms.map((item)=>(
-            <Channel onClick={()=>{gotToChannel(item.id)}}>
+          { rooms.map((item, index)=>(
+            <Channel key={index} onClick={()=>{gotToChannel(item.id)}}>
               # {item.name}
             </Channel>
             ))
           }
         </ChannelsList>
       </ChannelsContainer>
+      <Logout onClick={signOut}>Log Out</Logout>
     </Container>
   )
 }
@@ -83,7 +84,7 @@ function Sidebar({rooms}) {
 export default Sidebar;
 
 const Container = styled.div`
-  background: #3f0e40;
+
 `
 
 const WorkspaceContainer = styled.div`
@@ -106,8 +107,6 @@ const NewMessage = styled.div`
   height: 36px;
   border-radius: 50%;
   background: white;
-  color: #3f0e40;
-  fill: #3f0e40;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -120,7 +119,6 @@ const MainChannels = styled.div`
 `
 
 const MainChannelItem = styled.div`
-  color: rgb(188,171,188);
   display: grid;
   grid-template-columns: 15% auto;
   height: 28px;
@@ -132,7 +130,6 @@ const MainChannelItem = styled.div`
   }
 `
 const ChannelsContainer = styled.div`
-  color: rgb(188,171,188);
   padding-top: 10px;
 `
 
@@ -159,4 +156,12 @@ const Channel = styled.div`
   :hover{
     background: #350d36;
   }
+`
+
+const Logout = styled.div`
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  cursor: pointer;
+
 `

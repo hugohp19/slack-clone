@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
+import { AppContext } from '../context/AppContext';
 
 function ChatMessage({text, name, image, timestamp}) {
-  
+  const {backColor} = useContext(AppContext);
+
   return (
-    <Container>
+    <Container style={{color: `${backColor.chatText}`}}>
       <UserAvatar>
-        <img src={image}/>
+        <img src={image} alt='User Avatar'/>
       </UserAvatar>
       <MessageContent>
-        <Name>
+        <Name style={{color: `${backColor.chatInfo}`}}>
           {name}
-          <span>{new Date(timestamp.toDate()).toUTCString()}</span>
-        </Name>
+          <span style={{color: `${backColor.chatSpan}`}}>{new Date(timestamp.toDate()).toUTCString()}</span>
+        </Name >
         <Text>
           {text}
         </Text>
@@ -29,7 +31,7 @@ const Container = styled.div`
   align-items: center;
 
   :hover{
-    background: #CDAAFC;
+    background: #e3dee3;
   }
 `
 
@@ -54,11 +56,9 @@ const Name = styled.span`
   font-weight: 900;
   line-height: 1.4;
   font-size: 15px;
-  color: #3f0e40;
   
   span{
     font-weight: 400;
-    color: rgb(97,96,97);
     font-size: 12px;
     margin-left: 8px;
   }
